@@ -5,6 +5,10 @@ require_once('./account.php');
 
 session_start();
 
+if ($_SESSION['user'] == null) {
+    header("Location: ./index.php");
+}
+
 //create connection
 $db_server = "127.0.0.1";
 $db_username = "root";
@@ -15,14 +19,14 @@ $con = new mysqli($db_server, $db_username, $db_password, $db_name);
 
 $user =  $_SESSION['user'];
 
-$sql = "SELECT DISTINCT TBL_ORDER.id, TBL_ORDER.status, TBL_ITEM.name, TBL_ORDER.date, TBL_CUSTOMER.name as n, TBL_ITEM.price, TBL_ORDER.count, TBL_ORDER.address from TBL_ORDER, TBL_CUSTOMER, TBL_ITEM, TBL_USER WHERE TBL_USER.id={$user->id} AND TBL_ITEM.id=TBL_ORDER.item_id";
+$sql = "SELECT DISTINCT TBL_ORDER.id, TBL_ORDER.status, TBL_ITEM.name, TBL_ORDER.date, TBL_CUSTOMER.name as n, TBL_ITEM.price, TBL_ORDER.count, TBL_ORDER.address from TBL_ORDER, TBL_CUSTOMER, TBL_ITEM, TBL_USER WHERE TBL_USER.id={$user->id} AND TBL_ITEM.id=TBL_ORDER.item_id AND TBL_CUSTOMER.id=TBL_ORDER.customer_id";
 $result = $con->query($sql);
 
 $sql_is_shipped = "SELECT * FROM TBL_ORDER WHERE status=1";
 $sql_is_not_shipped = "SELECT * FROM TBL_ORDER WHERE status=0";
 
 $shipped = mysqli_num_rows($con->query($sql_is_shipped));
-$not_shipped = mysqli_num_rows($con->query($sql_is_shipped));
+$not_shipped = mysqli_num_rows($con->query($sql_is_not_shipped));
 
 $get_all_item_sql = "SELECT DISTINCT * FROM TBL_ITEM";
 $all_item_result = $con->query($get_all_item_sql)
@@ -52,6 +56,15 @@ $all_item_result = $con->query($get_all_item_sql)
             xhttp.open("GET", "deleteorder.php?id=" + id, true)
             xhttp.send();
         }
+
+        function sign_out() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                window.location = "./index.php"
+            }
+            xhttp.open("GET", "signout.php", true)
+            xhttp.send();
+        }
     </script>
 </head>
 
@@ -74,7 +87,7 @@ $all_item_result = $con->query($get_all_item_sql)
                         <a type="button" class="btn btn-outline-primary" href="./insertorder.php">Thêm đơn hàng</a>
                     </div>
                     <div class="row">
-                        <button type="button" class="btn btn-outline-primary">Đăng xuất</button>
+                        <button type="button" class="btn btn-outline-primary" onclick="sign_out()">Đăng xuất</button>
                     </div>
                 </div>
                 <div class="col">
@@ -112,7 +125,7 @@ $all_item_result = $con->query($get_all_item_sql)
                             $status = "Chưa giao";
                             if ($row['status'] == 0) $status = "Chưa giao";
                             else $status = "Đã giao";
-                            echo "<tr><td>" . $row['id'] . "</td><td>" . $row['name'] . "</td><td>" . $row['n'] . "</td><td>". $row['date'] . "</td><td>" . $row['address'] . "</td><td>" . $price ."</td><td>".$status."</td><td><button type=\"button\" class=\"btn btn-light pmd-btn-fab pmd-ripple-effect\" onclick=\"deleteOrder(1)\"><i class=\"fas fa-times\"></i></button></td></tr>";
+                            echo "<tr><td>" . $row['id'] . "</td><td>" . $row['name'] . "</td><td>" . $row['n'] . "</td><td>". $row['date'] . "</td><td>" . $row['address'] . "</td><td>" . $price ."</td><td>".$status."</td><td><button type=\"button\" class=\"btn btn-light pmd-btn-fab pmd-ripple-effect\" onclick=\"deleteOrder(".$row['id'].")\"><i class=\"fas fa-times\"></i></button></td></tr>";
                         }
                         ?>
                     </tbody>
