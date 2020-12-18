@@ -5,15 +5,10 @@ require_once('./account.php');
 
 session_start();
 
-session_start();
-
 if ($_SESSION['user'] == null) {
     header("Location: ./index.php");
 }
 
-if ($_GET['user'] == null) {
-    header("Location: ./index.php");
-}
 
 $id = $_GET['id'];
 $user = $_SESSION['user'];
