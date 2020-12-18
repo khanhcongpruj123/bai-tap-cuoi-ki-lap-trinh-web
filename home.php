@@ -49,7 +49,8 @@ $all_item_result = $con->query($get_all_item_sql)
             var xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
-                    document.getElementById('table-item').innerHTML = this.responseText
+                    // document.getElementById('table-item').innerHTML = this.responseText
+                    window.location.reload()
                 }
             }
 
