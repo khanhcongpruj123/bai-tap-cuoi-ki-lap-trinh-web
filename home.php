@@ -45,26 +45,29 @@ $all_item_result = $con->query($get_all_item_sql)
     <script src="./js/jquery.min.js"></script>
     <meta charset="utf-8" />
     <script>
+        
         function deleteOrder(id) {
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                    // document.getElementById('table-item').innerHTML = this.responseText
+            $.ajax({
+                type: "GET",
+                url: "deleteorder.php?id=" + id,
+                success: () => {
                     window.location.reload()
                 }
-            }
-
-            xhttp.open("GET", "deleteorder.php?id=" + id, true)
-            xhttp.send();
+            })
         }
 
         function sign_out() {
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
-                window.location = "./index.php"
-            }
-            xhttp.open("GET", "signout.php", true)
-            xhttp.send();
+            $.ajax({
+                type: "GET",
+                url: "signout.php",
+                success: () => {
+                    window.location = "index.php"
+                }
+            })
+        }
+
+        function edit_order(id) {
+            window.location = "editorder.php?id=" + id
         }
     </script>
 </head>
@@ -126,7 +129,7 @@ $all_item_result = $con->query($get_all_item_sql)
                             $status = "Chưa giao";
                             if ($row['status'] == 0) $status = "Chưa giao";
                             else $status = "Đã giao";
-                            echo "<tr><td>" . $row['id'] . "</td><td>" . $row['name'] . "</td><td>" . $row['n'] . "</td><td>". $row['date'] . "</td><td>" . $row['address'] . "</td><td>" . $price ."</td><td>".$status."</td><td><button type=\"button\" class=\"btn btn-light pmd-btn-fab pmd-ripple-effect\" onclick=\"deleteOrder(".$row['id'].")\"><i class=\"fas fa-times\"></i></button></td></tr>";
+                            echo "<tr><td>" . $row['id'] . "</td><td>" . $row['name'] . "</td><td>" . $row['n'] . "</td><td>". $row['date'] . "</td><td>" . $row['address'] . "</td><td>" . $price ."</td><td>".$status."</td><td><button type=\"button\" class=\"btn btn-light pmd-btn-fab pmd-ripple-effect\" onclick=\"deleteOrder(".$row['id'].")\"><i class=\"fas fa-times\"></i></button></td><td><button type=\"button\" class=\"btn btn-light pmd-btn-fab pmd-ripple-effect\" onclick=\"edit_order(".$row['id'].")\"><i class=\"fas fa-edit\"></i></button></td></tr>";
                         }
                         ?>
                     </tbody>
