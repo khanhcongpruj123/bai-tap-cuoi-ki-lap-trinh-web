@@ -1,72 +1,97 @@
 <?php
 
-    require_once('./account.php');
-    require_once('./user.php');
+session_start();
 
-    session_start();
+$user = $_SESSION['user'];
 
-    $username = $password = "";
+// var_dump($user);
+if ($user != null && $user->role == "0") {
+    header("Location: ./home.php");
+}
 
-    $username = $_POST["username"];
-    $password = $_POST["password"];
+//create connection
+$db_server = "127.0.0.1";
+$db_username = "root";
+$db_password = "kmrdeveloper315";
+$db_name = "quanlidonhang";
 
-    //create connection
-    $db_server = "127.0.0.1";
-    $db_username = "root";
-    $db_password = "kmrdeveloper315";
-    $db_name = "quanlidonhang";
+$con = new mysqli($db_server, $db_username, $db_password, $db_name);
 
-    $con = new mysqli($db_server, $db_username, $db_password, $db_name);
-    $sql = "SELECT * FROM TBL_ACCOUNT WHERE username='$username' AND password='$password'";
-    $result = $con->query($sql);
+$get_item_id_sql = "SELECT * FROM TBL_ITEM";
+$id_item = mysqli_fetch_assoc($con->query($get_item_id_sql))['id'];
 
-    if (mysqli_num_rows($result) == 1) {
-        $acc = mysqli_fetch_assoc($result);
-        $id = $acc['id'];
-        $sql2 = "SELECT * FROM TBL_USER WHERE id_account=$id";
-        $result2 = $con->query($sql2);
-        $u = mysqli_fetch_assoc($result2);
-        
-        $account = new Account($acc['id'], $acc['username'], $acc['password']);
-        $user = new User($u['id'], $u['name'], $u['sex'], $account);
+$result = $con->query($get_item_id_sql);
 
-        $_SESSION['user'] = $user;
-        header("Location: home.php");
-    }
 ?>
+
 
 <!DOCTYPE html>
 <html>
 
 <head>
-    <title>Quản lí đơn hàng</title>
-    <link href="./resources/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-    <link href="./resources/fontawesome/css/fontawesome.min.css" rel="stylesheet" type="text/css" />
-    <link href="./css/signin.css" rel="stylesheet" type="text/css" />
-    <script src="./resources/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <meta charset="utf-8" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>cuahangmaytinh</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="resources/fontawesome/css/all.css">
+    <link rel="stylesheet" href="assets/fonts/ionicons.min.css">
+    <link rel="stylesheet" href="assets/css/Article-List.css">
+    <link rel="stylesheet" href="assets/css/Login-Form-Clean.css">
+    <link rel="stylesheet" href="assets/css/Navigation-Clean.css">
+    <link rel="stylesheet" href="assets/css/Navigation-with-Button.css">
+    <link rel="stylesheet" href="assets/css/Navigation-with-Search.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <script>
+        function buy(id) {
+            window.location = "buy.php?id=" + id
+        }
+    </script>
 </head>
 
-<body class="text-center">
-    <main class="form-signin">
-        <form action="" method="POST">
-            <img class="mb-4" src="./assets/ic_order.png" alt="" width="72" height="57">
-            <h1 class="h3 mb-3 fw-normal">Quản lí đơn hàng</h1>
-            <label for="inputEmail" class="visually-hidden">Tên đăng nhập</label>
-            <input type="text" id="input_username" class="form-control" placeholder="Tên đăng nhập" required autofocus
-                name="username">
-            <label for="inputPassword" class="visually-hidden">Mật khẩu</label>
-            <input type="password" id="input_password" class="form-control" placeholder="Password" required
-                name="password">
-            <div class="checkbox mb-3">
-                <label>
-                    <input type="checkbox" value="remember-me"> Nhớ mật khẩu
-                </label>
+<body>
+    <nav class="navbar navbar-light navbar-expand-md navigation-clean-button">
+        <div class="container"><a class="navbar-brand" href="index.php">iShop</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navcol-1">
+                <ul class="nav navbar-nav mr-auto">
+                    <li class="nav-item"><a class="nav-link active" href="index.php">Trang chủ</a></li>
+                    <li class="nav-item"><a class="nav-link" href="order.php">Đơn hàng</a></li>
+                </ul><span class="navbar-text actions"> <a class="login" href="signup.php">Đăng kí</a>
+                    <?php
+
+                    if ($user != null) {
+                        echo "<a class=\"btn btn-light action-button\" role=\"button\" href=\"signout.php\">Đăng xuất</a></span></div>";
+                    } else {
+                        echo "<a class=\"btn btn-light action-button\" role=\"button\" href=\"signin.php\">Đăng nhập</a></span></div>";
+                    }
+
+                    ?>
             </div>
-            <button class="w-100 btn btn-lg btn-primary" type="submit">Đăng nhập</button>
-            <p class="mt-5 mb-3 text-muted">&copy; 2017-2020</p>
-        </form>
-    </main>
+    </nav>
+    <div class="article-list">
+        <div class="container">
+            <div class="intro">
+                <h2 class="text-center">iShop</h2>
+                <p class="text-center">Chuyên cung cáp máy tính các loại</p>
+            </div>
+
+            <div class="row">
+                <?php
+                while ($row = mysqli_fetch_assoc($result)) {
+                    echo "
+            
+                <div class=\"col-sm-6 col-md-4 item\"><a href=\"#\"><img class=\"img-thumbnail\" style=\"height: 200px\" src=\"./assets/".$row['thumnail']."\"></a>
+                        <h3 class=\"name\">" . $row['name'] . "</h3>
+                        <p class=\"description\">" . $row['price'] . "</p><button onclick=\"buy(".$row['id'].")\" type=\"button\" class=\"btn btn-primary\" href=\"#\"><i class=\"fas fa-cart-plus\"></i>\tMua ngay</i></a>
+                    </div>
+
+                ";
+                }
+                ?>
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
 </body>
 
 </html>

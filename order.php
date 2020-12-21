@@ -18,11 +18,11 @@ $db_name = "quanlidonhang";
 $con = new mysqli($db_server, $db_username, $db_password, $db_name);
 $user =  $_SESSION['user'];
 
-$sql = "SELECT DISTINCT TBL_ORDER.id, TBL_ORDER.count, TBL_ORDER.status, TBL_ITEM.name, TBL_ORDER.date, TBL_USER.name as n, TBL_ITEM.price, TBL_ORDER.count, TBL_ORDER.address from TBL_ORDER, TBL_ITEM, TBL_USER WHERE TBL_ITEM.id=TBL_ORDER.item_id AND TBL_ORDER.user_id=TBL_USER.id ORDER BY TBL_ORDER.date";
+$sql = "SELECT DISTINCT TBL_ORDER.id, TBL_ORDER.count, TBL_ORDER.status, TBL_ITEM.name, TBL_ORDER.date, TBL_USER.name as n, TBL_ITEM.price, TBL_ORDER.count, TBL_ORDER.address from TBL_ORDER, TBL_ITEM, TBL_USER WHERE TBL_ITEM.id=TBL_ORDER.item_id AND TBL_ORDER.user_id={$user->id} AND TBL_ORDER.user_id=TBL_USER.id ORDER BY TBL_ORDER.date";
 $result = $con->query($sql);
 
-$sql_is_shipped = "SELECT * FROM TBL_ORDER WHERE status=1";
-$sql_is_not_shipped = "SELECT * FROM TBL_ORDER WHERE status=0";
+$sql_is_shipped = "SELECT * FROM TBL_ORDER WHERE status=1 AND user_id={$user->id}";
+$sql_is_not_shipped = "SELECT * FROM TBL_ORDER WHERE status=0 AND user_id={$user->id}";
 
 $shipped = mysqli_num_rows($con->query($sql_is_shipped));
 $not_shipped = mysqli_num_rows($con->query($sql_is_not_shipped));
@@ -36,7 +36,18 @@ $all_item_result = $con->query($get_all_item_sql)
 <html>
 
 <head>
-    <title>Quản lí đơn hàng</title>
+<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>iShop</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="resources/fontawesome/css/all.css">
+    <link rel="stylesheet" href="assets/fonts/ionicons.min.css">
+    <link rel="stylesheet" href="assets/css/Article-List.css">
+    <link rel="stylesheet" href="assets/css/Login-Form-Clean.css">
+    <link rel="stylesheet" href="assets/css/Navigation-Clean.css">
+    <link rel="stylesheet" href="assets/css/Navigation-with-Button.css">
+    <link rel="stylesheet" href="assets/css/Navigation-with-Search.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
     <link href="./resources/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
     <link href="./resources/fontawesome/css/all.css" rel="stylesheet" type="text/css" />
     <link href="./css/float.css" rel="stylesheet" type="text/css" />
@@ -73,13 +84,23 @@ $all_item_result = $con->query($get_all_item_sql)
 
 <body>
     <!-- Image and text -->
-    <nav class="navbar navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">
-                <img src="./assets/ic_order.png" alt="" width="30" height="24" class="d-inline-block align-top">
-                Quản lí cửa hàng
-            </a>
-        </div>
+    <nav class="navbar navbar-light navbar-expand-md navigation-clean-button">
+        <div class="container"><a class="navbar-brand" href="index.php">iShop</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navcol-1">
+                <ul class="nav navbar-nav mr-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.php">Trang chủ</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="order.php">Đơn hàng</a></li>
+                </ul><span class="navbar-text actions"> <a class="login" href="">Đăng kí</a>
+                    <?php
+
+                    if ($user != null) {
+                        echo "<a class=\"btn btn-light action-button\" role=\"button\" href=\"signout.php\">Đăng xuất</a></span></div>";
+                    } else {
+                        echo "<a class=\"btn btn-light action-button\" role=\"button\" href=\"signin.php\">Đăng nhập</a></span></div>";
+                    }
+
+                    ?>
+            </div>
     </nav>
     <div class="container" style="margin-top: 10px;">
         <div class="col">
@@ -129,7 +150,7 @@ $all_item_result = $con->query($get_all_item_sql)
                             $status = "Chưa giao";
                             if ($row['status'] == 0) $status = "Chưa giao";
                             else $status = "Đã giao";
-                            echo "<tr><td>" . $row['id'] . "</td><td>" . $row['name'] . "</td><td>" . $row['n'] . "</td><td>". $row['date'] . "</td><td>" . $row['address'] . "</td><td>".$row['count']."</td><td>" . $price ."</td><td>".$status."</td><td><button type=\"button\" class=\"btn btn-light pmd-btn-fab pmd-ripple-effect\" onclick=\"deleteOrder(".$row['id'].")\"><i class=\"fas fa-times\"></i></button></td><td><button type=\"button\" class=\"btn btn-light pmd-btn-fab pmd-ripple-effect\" onclick=\"edit_order(".$row['id'].")\"><i class=\"fas fa-edit\"></i></button></td></tr>";
+                            echo "<tr><td>" . $row['id'] . "</td><td>" . $row['name'] . "</td><td>" . $row['n'] . "</td><td>". $row['date'] . "</td><td>" . $row['address'] . "</td><td>".$row['count']."</td><td>" . $price ."</td><td>".$status."</td></tr>";
                         }
                         ?>
                     </tbody>
