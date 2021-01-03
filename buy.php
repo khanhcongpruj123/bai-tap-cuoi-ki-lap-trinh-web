@@ -16,7 +16,7 @@ $item_id = $_GET['id'];
 //create connection
 $db_server = "127.0.0.1";
 $db_username = "root";
-$db_password = "kmrdeveloper315";
+$db_password = "";
 $db_name = "quanlidonhang";
 
 $con = new mysqli($db_server, $db_username, $db_password, $db_name);
@@ -27,12 +27,18 @@ $item_detail = mysqli_fetch_assoc($con->query($get_item_detail_sql));
 
 
 // handle post
-$item = $_POST['item'];
-$customer_name = $_POST['customer_name'];
-$address = $_POST['address'];
-$count = $_POST['count'];
-$date = $_POST['date-order'];
-$sex = $_POST['sex'];
+$item = null;
+if (isset($_POST['item'])) $item = $_POST['item'];
+$customer_name = null;
+if (isset($_POST['customer_name'])) $customer_name = $_POST['customer_name'];
+$address = null;
+if (isset($_POST['address'])) $address = $_POST['address'];
+$count = null;
+if (isset($_POST['count'])) $count = $_POST['count'];
+$date = null;
+if (isset($_POST['date-order'])) $date = $_POST['date-order'];
+$sex = null;
+if (isset($_POST['sex'])) $sex = $_POST['sex'];
 
 
 
@@ -122,7 +128,7 @@ $all_item_result = $con->query($get_all_item_sql)
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="date-picker">Ngày mua</label>
-                    <input type="date" class="form-control" id="date-picker" name="date-order" value="<? echo(date("Y-m-d")); ?>" id="date">
+                    <input type="date" class="form-control" id="date-picker" name="date-order" value="<?php echo(date("Y-m-d")); ?>" id="date">
                 </div>
             </div>
             <div class="form-row">

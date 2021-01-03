@@ -2,7 +2,8 @@
 
 session_start();
 
-$user = $_SESSION['user'];
+$user = null;
+if (isset($_SESSION['user'])) $user = $_SESSION['user'];
 
 // var_dump($user);
 if ($user != null && $user->role == "0") {

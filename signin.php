@@ -7,8 +7,8 @@
 
     $username = $password = "";
 
-    $username = $_POST["username"];
-    $password = $_POST["password"];
+    if (isset($_POST["username"])) $username = $_POST["username"];
+    if (isset($_POST["password"])) $password = $_POST["password"];
 
     //create connection
     $db_server = "127.0.0.1";
