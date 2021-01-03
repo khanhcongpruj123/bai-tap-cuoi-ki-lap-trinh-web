@@ -14,7 +14,6 @@
  Date: 22/12/2020 01:20:23
 */
 
-SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
@@ -27,7 +26,7 @@ CREATE TABLE `TBL_ACCOUNT` (
   `password` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`,`username`),
   KEY `id` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;;
+);
 
 -- ----------------------------
 -- Records of TBL_ACCOUNT
@@ -48,7 +47,7 @@ CREATE TABLE `TBL_ITEM` (
   `price` decimal(10,2) DEFAULT NULL,
   `thumnail` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;;
+);
 
 -- ----------------------------
 -- Records of TBL_ITEM
@@ -72,7 +71,7 @@ CREATE TABLE `TBL_USER` (
   `role` int DEFAULT NULL,
   PRIMARY KEY (`id`,`id_account`),
   KEY `id` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;;
+);
 
 -- ----------------------------
 -- Records of TBL_USER
@@ -100,7 +99,7 @@ CREATE TABLE `TBL_ORDER` (
   KEY `user_id` (`user_id`),
   CONSTRAINT `tbl_order_ibfk_1` FOREIGN KEY (`item_id`) REFERENCES `TBL_ITEM` (`id`),
   CONSTRAINT `tbl_order_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `TBL_USER` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;;
+);
 
 -- ----------------------------
 -- Records of TBL_ORDER
