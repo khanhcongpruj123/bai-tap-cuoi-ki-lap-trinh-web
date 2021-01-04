@@ -1,5 +1,8 @@
 <?php
 
+require_once('./account.php');
+require_once('./user.php');
+
 session_start();
 
 $user = null;

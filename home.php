@@ -5,7 +5,9 @@ require_once('./account.php');
 
 session_start();
 
-if (isset($_SESSION['user'])) {
+$user = null;
+if (isset($_SESSION['user'])) $user = $_SESSION['user'];
+if ($user != null && $user->role == "1") {
     header("Location: ./index.php");
 }
 

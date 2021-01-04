@@ -16,29 +16,37 @@ $user = $_SESSION['user'];
 //create connection
 $db_server = "127.0.0.1";
 $db_username = "root";
-$db_password = "kmrdeveloper315";
+$db_password = "";
 $db_name = "quanlidonhang";
 
 $con = new mysqli($db_server, $db_username, $db_password, $db_name);
 
-$item = $_POST['item'];
-$customer_name = $_POST['customer_name'];
-$address = $_POST['address'];
-$count = $_POST['count'];
-$date = $_POST['date-order'];
-$sex = $_POST['sex'];
-$status = 0;
-if ($_POST['status'] == 'Đã giao') $status = 1;
+$item = $customer_name = $address = $count = $date = $sex = null;
+$status = null;
+if (isset($_POST['item'])) $item = $_POST['item'];
+if (isset($_POST['customer_name'])) $customer_name = $_POST['customer_name'];
+if (isset($_POST['address'])) $address = $_POST['address'];
+if (isset($_POST['count'])) $count = $_POST['count'];
+if (isset($_POST['date-order'])) $date = $_POST['date-order'];
+if (isset($_POST['sex'])) $sex = $_POST['sex'];
+if (isset($_POST['status'])) {
+    $status = 0;
+    if ($_POST['status'] == 'Đã giao') $status = 1;
+}
 
 
 if ($item != null) {
+
+    $get_user_id_sql = "SELECT TBL_USER.id FROM TBL_USER, TBL_ORDER WHERE TBL_USER.id=TBL_ORDER.user_id AND TBL_ORDER.id=$id_order";
+    $user_id = mysqli_fetch_assoc($con->query($get_user_id_sql))['id'];
+
     $get_item_id_sql = "SELECT id FROM TBL_ITEM WHERE name='$item'";
     $id_item = mysqli_fetch_assoc($con->query($get_item_id_sql))['id'];
 
     $con->query("DELETE FROM TBL_ORDER WHERE id=$id_order");
 
     $valid_date = date('Y-m-d', strtotime($date));
-    $insert_order_sql = "INSERT INTO TBL_ORDER(id, item_id, user_id, count, address, date, status) VALUES(0, " . $id_item . ", " . $user->id . ", " . $count . ", '" . $address . "', '" . $valid_date . "', " . $status . ")";
+    $insert_order_sql = "INSERT INTO TBL_ORDER(id, item_id, user_id, count, address, date, status) VALUES(0, " . $id_item . ", " . $user_id . ", " . $count . ", '" . $address . "', '" . $valid_date . "', " . $status . ")";
     // var_dump($insert_order_sql);
     $con->query($insert_order_sql);
     header('Location: ./home.php');
